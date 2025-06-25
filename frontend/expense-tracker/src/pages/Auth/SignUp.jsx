@@ -36,9 +36,9 @@ const Signup = () => {
       }
   
       setError("");
-    }
+    };
     
-  return (
+   return (
     <AuthLayout>
       <div className="lg:w-[100%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center">
         <h3 className="text-xl font-semibold text-black">Create an Account</h3>
@@ -74,6 +74,19 @@ const Signup = () => {
               />
             </div>
           </div>
+
+            {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
+          
+            <button type="submit" className="btn-primary">
+              SIGN UP
+            </button>
+          
+            <p className="text-[13px] text-slate-800 mt-3">
+              Already have an account?{" "}
+              <Link className="font-medium text-primary underline" to="/login">
+                SignUp
+              </Link>
+            </p>
         </form>
       </div>
     </AuthLayout>
