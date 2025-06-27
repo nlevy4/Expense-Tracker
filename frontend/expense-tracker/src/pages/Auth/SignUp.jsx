@@ -36,7 +36,37 @@ const Signup = () => {
       }
   
       setError("");
-    };
+      // SignUp API Call
+          try {
+            // Upload image if present
+            if (profilePic) {
+              const imgUploadRes = await uploadImage(profilePic);
+              profileImageUrl = imgUploadRes.imageUrl || "";
+            }
+      
+            const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+              fullName,
+              email,
+              password,
+              profileImageUrl,
+            });
+      
+            const { token, user } = response.data;
+      
+            if (token) {
+              localStorage.setItem("token", token);
+              updateUser(user);
+              navigate("/dashboard");
+            }
+          } catch (error) {
+            if (error.response && error.response.data.message) {
+              setError(error.response.data.message);
+            } else {
+              setError("Something went wrong. Please try again.");
+            }
+          }
+        };
+    
     
    return (
     <AuthLayout>
