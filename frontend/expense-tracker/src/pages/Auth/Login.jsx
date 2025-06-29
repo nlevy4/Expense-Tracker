@@ -8,7 +8,7 @@ import { API_PATHS } from "../../utils/apiPaths";
 import { UserContext } from "../../context/UserContext";
 
 
-const LoginForm = () => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -86,7 +86,7 @@ const LoginForm = () => {
           </button>
 
           <p className="text-[13px] text-slate-800 mt-3">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link className="font-medium text-primary underline" to="/signup">
               SignUp
             </Link>
@@ -97,4 +97,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default Login;
