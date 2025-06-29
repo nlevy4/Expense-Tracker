@@ -61,3 +61,14 @@ export const prepareExpenseLineChartData = (data = []) => {
 
   return chartData;
 };
+
+export const prepareExpensePieChartData = (data = []) => {
+  const categoryMap = {};
+  data.forEach(item => {
+    if (!categoryMap[item.category]) {
+      categoryMap[item.category] = 0;
+    }
+    categoryMap[item.category] += Number(item.amount);
+  });
+  return Object.entries(categoryMap).map(([name, amount]) => ({ name, amount }));
+};

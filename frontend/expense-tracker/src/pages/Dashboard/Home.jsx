@@ -16,6 +16,8 @@ import ExpenseTransactions from "../../components/Dashboard/ExpenseTransactions"
 import Last30DaysExpenses from "../../components/Dashboard/Last30DaysExpenses";
 import RecentIncome from "../../components/Dashboard/RecentIncome";
 import RecentIncomeWithChart from "../../components/Dashboard/RecentIncomeWithChart";
+import CustomPieChart from "../../components/charts/CustomPieChart";
+import { prepareExpensePieChartData } from "../../utils/helper";
 
 const Home = () => {
   useUserAuth();
@@ -94,8 +96,12 @@ const Home = () => {
             onSeeMore={() => navigate("/expense")}
           />
 
-          <Last30DaysExpenses
-            data={dashboardData?.last30DaysExpenses?.transactions || []}
+          <CustomPieChart
+            data={prepareExpensePieChartData(dashboardData?.last30DaysExpenses?.transactions || [])}
+            label="Last 30 Days Expenses"
+            totalAmount={`$${dashboardData?.last30DaysExpenses?.total || 0}`}
+            showTextAnchor
+            colors={["#FA2C37", "#FF6900", "#875CF5", "#10B981", "#3B82F6"]}
           />
 
           <RecentIncomeWithChart
