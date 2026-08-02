@@ -12,6 +12,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.post("/api/v1/debug", (req, res) => {
+  res.json({
+    contentType: req.headers["content-type"],
+    contentLength: req.headers["content-length"],
+    body: req.body,
+    bodyType: typeof req.body,
+  });
+});
+
 app.use("/api/v1/income", incomeRoutes);
 app.use("/api/v1/expense", expenseRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
