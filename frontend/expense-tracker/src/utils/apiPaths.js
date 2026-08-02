@@ -27,4 +27,8 @@ export const API_PATHS = {
     DELETE_HISTORY: (accountId, historyId) =>
       `/api/v1/accounts/${accountId}/history/${historyId}`,
   },
+  DATA: {
+    EXPORT: "/api/v1/data/export",
+    IMPORT: "/api/v1/data/import",
+  },
 };

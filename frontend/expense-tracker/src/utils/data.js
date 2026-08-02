@@ -3,6 +3,7 @@ import {
   LuHandCoins,
   LuWalletMinimal,
   LuLandmark,
+  LuDatabase,
 } from "react-icons/lu";
 
 
@@ -30,5 +31,11 @@ export const SIDE_MENU_DATA = [
     label: "Accounts",
     icon: LuLandmark,
     path: "/accounts",
+  },
+  {
+    id: "05",
+    label: "Data",
+    icon: LuDatabase,
+    path: "/data",
   },
 ];

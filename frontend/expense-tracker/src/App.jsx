@@ -11,6 +11,7 @@ import Home from "./pages/Dashboard/Home";
 import Income from "./pages/Dashboard/Income";
 import Expense from "./pages/Dashboard/Expense";
 import Accounts from "./pages/Dashboard/Accounts";
+import Data from "./pages/Dashboard/Data";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/income" exact element={<Income />} />
           <Route path="/expense" exact element={<Expense />} />
           <Route path="/accounts" exact element={<Accounts />} />
+          <Route path="/data" exact element={<Data />} />
         </Routes>
       </Router>
 
