@@ -16,7 +16,7 @@ import Last30DaysExpenses from "../../components/Dashboard/Last30DaysExpenses";
 import RecentIncome from "../../components/Dashboard/RecentIncome";
 import RecentIncomeWithChart from "../../components/Dashboard/RecentIncomeWithChart";
 import AccountsOverview from "../../components/Dashboard/AccountsOverview";
-import CustomPieChart from "../../components/charts/CustomPieChart";
+import CustomPieChart from "../../components/Charts/CustomPieChart";
 import NetWorthChart from "../../components/Charts/NetWorthChart";
 import { prepareExpensePieChartData } from "../../utils/helper";
 
