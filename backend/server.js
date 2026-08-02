@@ -12,13 +12,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post("/api/v1/debug", (req, res) => {
-  res.json({
-    contentType: req.headers["content-type"],
-    contentLength: req.headers["content-length"],
-    body: req.body,
-    bodyType: typeof req.body,
-  });
+// serverless-http pre-populates req.body as a raw Buffer in Netlify's
+// production runtime, which makes express.json() skip parsing it (it only
+// parses when req.body is still undefined). Parse it ourselves when that
+// happens so route handlers always see a plain object.
+app.use((req, res, next) => {
+  if (Buffer.isBuffer(req.body)) {
+    try {
+      req.body = req.body.length ? JSON.parse(req.body.toString("utf-8")) : {};
+    } catch (error) {
+      req.body = {};
+    }
+  }
+  next();
 });
 
 app.use("/api/v1/income", incomeRoutes);
