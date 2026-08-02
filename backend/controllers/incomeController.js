@@ -15,7 +15,7 @@ exports.addIncome = async (req, res) => {
     const newIncome = await insert(STORE, {
       icon,
       source,
-      amount,
+      amount: Number(amount),
       date: new Date(date).toISOString(),
     });
 

@@ -15,7 +15,7 @@ exports.addExpense = async (req, res) => {
     const newExpense = await insert(STORE, {
       icon,
       category,
-      amount,
+      amount: Number(amount),
       date: new Date(date).toISOString(),
     });
 
