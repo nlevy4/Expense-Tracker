@@ -1,7 +1,14 @@
 {
+  "private": true,
   "dependencies": {
+    "@netlify/blobs": "^8.1.0",
     "@tailwindcss/vite": "^4.1.10",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
     "recharts": "^3.0.2",
-    "tailwindcss": "^4.1.10"
+    "serverless-http": "^3.2.0",
+    "tailwindcss": "^4.1.10",
+    "xlsx": "^0.18.5"
   }
 }

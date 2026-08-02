@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 import { LuImage, LuX } from "react-icons/lu";
 
 const EmojiPickerPopup = ({ icon, onSelect }) => {
@@ -11,7 +11,7 @@ const EmojiPickerPopup = ({ icon, onSelect }) => {
         className="flex items-center gap-4 cursor-pointer"
         onClick={() => setIsOpen(true)}
       >
-        <div className="w-12 h-12 flex items-center justify-center text-2xl bg-purple-50 text-primary rounded-lg">
+        <div className="w-12 h-12 flex items-center justify-center text-2xl bg-purple-500/10 text-primary rounded-lg">
           {icon ? (
             <img src={icon} alt="Icon" className="w-12 h-12" />
           ) : (
@@ -19,20 +19,21 @@ const EmojiPickerPopup = ({ icon, onSelect }) => {
           )}
         </div>
 
-        <p className="">{icon ? "Change Icon" : "Pick Icon"}</p>
+        <p className="text-slate-300">{icon ? "Change Icon" : "Pick Icon"}</p>
       </div>
 
       {isOpen && (
         <div className="relative">
           <button
-            className="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 rounded-full absolute -top-2 -right-2 z-10 cursor-pointer"
+            className="w-7 h-7 flex items-center justify-center bg-slate-800 border border-slate-700 text-slate-300 rounded-full absolute -top-2 -right-2 z-10 cursor-pointer"
             onClick={() => setIsOpen(false)}
           >
             <LuX />
           </button>
-          
+
           <EmojiPicker
             open={isOpen}
+            theme={Theme.DARK}
             onEmojiClick={(emoji) => onSelect(emoji?.imageUrl || "")}
           />
         </div>

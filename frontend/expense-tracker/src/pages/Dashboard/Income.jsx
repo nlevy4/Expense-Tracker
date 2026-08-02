@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 
 import { useNavigate } from "react-router-dom";
-import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import IncomeOverview from "../../components/Income/IncomeOverview";
@@ -14,8 +13,6 @@ import toast from "react-hot-toast";
 import DeleteAlert from "../../components/DeleteAlert";
 
 const Income = () => {
-  useUserAuth();
-
   const [incomeData, setIncomeData] = useState([]);
   const [loading, setLoading] = useState(false);
 

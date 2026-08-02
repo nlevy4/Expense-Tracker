@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import { LuHandCoins, LuWalletMinimal } from "react-icons/lu";
+import { LuHandCoins, LuWalletMinimal, LuLandmark } from "react-icons/lu";
 import { IoMdCard } from "react-icons/io";
 
 import { useNavigate } from "react-router-dom";
 import InfoCard from "../../components/Cards/InfoCard";
-import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { addThousandsSeparator } from "../../utils/helper";
@@ -16,12 +15,12 @@ import ExpenseTransactions from "../../components/Dashboard/ExpenseTransactions"
 import Last30DaysExpenses from "../../components/Dashboard/Last30DaysExpenses";
 import RecentIncome from "../../components/Dashboard/RecentIncome";
 import RecentIncomeWithChart from "../../components/Dashboard/RecentIncomeWithChart";
+import AccountsOverview from "../../components/Dashboard/AccountsOverview";
 import CustomPieChart from "../../components/charts/CustomPieChart";
+import NetWorthChart from "../../components/Charts/NetWorthChart";
 import { prepareExpensePieChartData } from "../../utils/helper";
 
 const Home = () => {
-  useUserAuth();
-
   const navigate = useNavigate();
 
   const [dashboardData, setDashboardData] = useState(null);
@@ -56,10 +55,10 @@ const Home = () => {
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className="my-5 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <InfoCard
             icon={<IoMdCard />}
-            label="Total Balance"
+            label="Net Worth"
             value={addThousandsSeparator(dashboardData?.totalBalance || 0)}
             color="bg-primary"
           />
@@ -77,9 +76,33 @@ const Home = () => {
             value={addThousandsSeparator(dashboardData?.totalExpenses || 0)}
             color="bg-red-500"
           />
+
+          <InfoCard
+            icon={<LuLandmark />}
+            label="Accounts Balance"
+            value={addThousandsSeparator(dashboardData?.totalAccountsBalance || 0)}
+            color="bg-green-500"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {dashboardData?.netWorthHistory?.length > 1 && (
+            <div className="card md:col-span-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h5 className="text-lg">Net Worth Over Time</h5>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Combined balance across income, expenses, and every account.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <NetWorthChart data={dashboardData.netWorthHistory} />
+              </div>
+            </div>
+          )}
+
           <RecentTransactions
             transactions={dashboardData?.recentTransactions}
             onSeeMore={() => navigate("/expense")}
@@ -89,6 +112,11 @@ const Home = () => {
             totalBalance={dashboardData?.totalBalance || 0}
             totalIncome={dashboardData?.totalIncome || 0}
             totalExpense={dashboardData?.totalExpenses || 0}
+          />
+
+          <AccountsOverview
+            accounts={dashboardData?.accounts || []}
+            onSeeMore={() => navigate("/accounts")}
           />
 
           <ExpenseTransactions

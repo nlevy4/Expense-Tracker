@@ -1,39 +1,36 @@
-const xlsx = require('xlsx');
-const Expense = require("../models/Expense");
+const xlsx = require("xlsx");
+const { readAll, insert, removeById } = require("../utils/jsonStore");
+
+const STORE = "expense";
 
 // Add Expense
 exports.addExpense = async (req, res) => {
-  const userId = req.user.id;
-
   try {
     const { icon, category, amount, date } = req.body;
 
-    // Validation: Check for missing fields
     if (!category || !amount || !date) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const newExpense = new Expense({
-      userId,
+    const newExpense = await insert(STORE, {
       icon,
       category,
       amount,
-      date: new Date(date),
+      date: new Date(date).toISOString(),
     });
 
-    await newExpense.save();
     res.status(200).json(newExpense);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-// Get All Expenses (For Logged-in User)
+// Get All Expenses
 exports.getAllExpenses = async (req, res) => {
-  const userId = req.user.id;
-
   try {
-    const expenses = await Expense.find({ userId }).sort({ date: -1 });
+    const expenses = (await readAll(STORE)).sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
     res.json(expenses);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -43,7 +40,7 @@ exports.getAllExpenses = async (req, res) => {
 // Delete Expense
 exports.deleteExpense = async (req, res) => {
   try {
-    await Expense.findByIdAndDelete(req.params.id);
+    await removeById(STORE, req.params.id);
     res.json({ message: "Expense deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -52,22 +49,31 @@ exports.deleteExpense = async (req, res) => {
 
 // Download Expense Details in Excel
 exports.downloadExpenseExcel = async (req, res) => {
-  const userId = req.user.id;
   try {
-    const expense = await Expense.find({ userId }).sort({ date: -1 });
+    const expense = (await readAll(STORE)).sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
 
-    // Prepare data for Excel
     const data = expense.map((item) => ({
       Category: item.category,
       Amount: item.amount,
       Date: item.date,
     }));
-    
+
     const wb = xlsx.utils.book_new();
     const ws = xlsx.utils.json_to_sheet(data);
     xlsx.utils.book_append_sheet(wb, ws, "Expense");
-    xlsx.writeFile(wb, 'expense_details.xlsx');
-    res.download('expense_details.xlsx');
+    const buffer = xlsx.write(wb, { type: "buffer", bookType: "xlsx" });
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=expense_details.xlsx"
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.send(buffer);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }

@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+.env
+.netlify
+deno.lock
+*.log
+.DS_Store
+
+# Legacy local JSON data store (replaced by Netlify Blobs in production;
+# these files may contain real personal financial data — never commit them)
+backend/data/*.json

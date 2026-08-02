@@ -5,54 +5,35 @@ import {
   Navigate,
 } from "react-router-dom";
 import React from "react";
-import Login from "./pages/Auth/Login";
-import SignUp from "./pages/Auth/SignUp";
-import UserProvider from "./context/UserContext";
 
 import { Toaster } from "react-hot-toast";
 import Home from "./pages/Dashboard/Home";
 import Income from "./pages/Dashboard/Income";
 import Expense from "./pages/Dashboard/Expense";
+import Accounts from "./pages/Dashboard/Accounts";
 
 const App = () => {
   return (
     <div>
-      <UserProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Root />} />
-            <Route path="/login" exact element={<Login />} />
-            <Route path="/signUp" exact element={<SignUp />} />
-            <Route path="/dashboard" exact element={<Home />} />
-            <Route path="/income" exact element={<Income />} />
-            <Route path="/expense" exact element={<Expense />} />
-          </Routes>
-        </Router>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route path="/dashboard" exact element={<Home />} />
+          <Route path="/income" exact element={<Income />} />
+          <Route path="/expense" exact element={<Expense />} />
+          <Route path="/accounts" exact element={<Accounts />} />
+        </Routes>
+      </Router>
 
-        <Toaster
-          toastOptions={{
-            className: "",
-            style: {
-              fontSize:'13px'
-            },
-          }}
-        />
-        
-      </UserProvider>
+      <Toaster
+        toastOptions={{
+          className: "",
+          style: {
+            fontSize: "13px",
+          },
+        }}
+      />
     </div>
-  );
-};
-
-// Define the Root component to handle the initial redirect
-const Root = () => {
-  // Check if token exists in localStorage
-  const isAuthenticated = !!localStorage.getItem("token");
-
-  // Redirect to dashboard if authenticated, otherwise to login
-  return isAuthenticated ? (
-    <Navigate to="/dashboard" />
-  ) : (
-    <Navigate to="/login" />
   );
 };
 

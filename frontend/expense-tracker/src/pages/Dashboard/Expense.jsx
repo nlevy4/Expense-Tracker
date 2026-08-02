@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 
 import { useNavigate } from "react-router-dom";
-import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import ExpenseList from "../../components/Expense/ExpenseList";
@@ -13,8 +12,6 @@ import Modal from "../../components/Modal";
 import toast from "react-hot-toast";
 
 const Expense = () => {
-  useUserAuth();
-
   const navigate = useNavigate();
 
   const [expenseData, setExpenseData] = useState([]);

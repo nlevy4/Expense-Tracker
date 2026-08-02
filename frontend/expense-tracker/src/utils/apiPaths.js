@@ -1,12 +1,9 @@
-export const BASE_URL = "http://localhost:8000";
+// Relative URL: works both via `netlify dev` (proxies /api to the local
+// function) and once deployed (Netlify redirects /api to the function).
+export const BASE_URL = "";
 
 // utils/apiPaths.js
 export const API_PATHS = {
-  AUTH: {
-    LOGIN: "/api/v1/auth/login",
-    REGISTER: "/api/v1/auth/register",
-    GET_USER_INFO: "/api/v1/auth/getUser",
-  },
   DASHBOARD: {
     GET_DATA: "/api/v1/dashboard",
   },
@@ -22,7 +19,12 @@ export const API_PATHS = {
     DELETE_EXPENSE: (expenseId) =>  `/api/v1/expense/${expenseId}`,
     DOWNLOAD_EXPENSE: `/api/v1/expense/downloadexcel`,
   },
-  IMAGE: {
-    UPLOAD_IMAGE: "/api/v1/auth/upload-image",
+  ACCOUNTS: {
+    ADD_ACCOUNT: "/api/v1/accounts/add",
+    GET_ALL_ACCOUNTS: "/api/v1/accounts/get",
+    ADD_BALANCE: (accountId) => `/api/v1/accounts/${accountId}/balance`,
+    DELETE_ACCOUNT: (accountId) => `/api/v1/accounts/${accountId}`,
+    DELETE_HISTORY: (accountId, historyId) =>
+      `/api/v1/accounts/${accountId}/history/${historyId}`,
   },
 };
