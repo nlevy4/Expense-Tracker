@@ -1,7 +1,20 @@
 const crypto = require("crypto");
 const { getStore } = require("@netlify/blobs");
 
-const store = () => getStore("expense-tracker-data");
+// Automatic environment detection for Netlify Blobs doesn't reliably reach
+// through the Express + serverless-http wrapper, so fall back to explicit
+// credentials when available. SITE_ID is auto-injected by Netlify; the
+// token comes from a personal access token set as an env var.
+const store = () => {
+  const siteID = process.env.SITE_ID;
+  const token = process.env.NETLIFY_BLOBS_TOKEN;
+
+  if (siteID && token) {
+    return getStore({ name: "expense-tracker-data", siteID, token });
+  }
+
+  return getStore("expense-tracker-data");
+};
 
 const readAll = async (name) => {
   const data = await store().get(name, { type: "json" });
