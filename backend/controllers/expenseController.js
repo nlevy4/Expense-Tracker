@@ -6,7 +6,7 @@ const STORE = "expense";
 // Add Expense
 exports.addExpense = async (req, res) => {
   try {
-    const { icon, category, amount, date } = req.body;
+    const { icon, category, amount, date, note } = req.body;
 
     if (!category || !amount || !date) {
       return res.status(400).json({ message: "All fields are required" });
@@ -17,6 +17,7 @@ exports.addExpense = async (req, res) => {
       category,
       amount: Number(amount),
       date: new Date(date).toISOString(),
+      note: note || "",
     });
 
     res.status(200).json(newExpense);
@@ -58,6 +59,7 @@ exports.downloadExpenseExcel = async (req, res) => {
       Category: item.category,
       Amount: item.amount,
       Date: item.date,
+      Note: item.note || "",
     }));
 
     const wb = xlsx.utils.book_new();

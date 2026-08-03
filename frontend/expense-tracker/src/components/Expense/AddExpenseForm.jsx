@@ -8,6 +8,7 @@ const AddExpenseForm = ({onAddExpense}) => {
     amount: "",
     date: "",
     icon: "",
+    note: "",
   });
 
   const handleChange = (key, value) => setIncome({ ...income, [key]: value });
@@ -41,6 +42,14 @@ const AddExpenseForm = ({onAddExpense}) => {
         label="Date"
         placeholder=""
         type="date"
+      />
+
+      <Input
+        value={income.note}
+        onChange={({ target }) => handleChange("note", target.value)}
+        label="Note"
+        placeholder="Optional note"
+        type="text"
       />
 
       <div className="flex justify-end mt-6">

@@ -46,7 +46,7 @@ const Expense = () => {
 
   // Handle Add Expense
   const handleAddExpense = async (expense) => {
-    const { category, amount, date, icon } = expense;
+    const { category, amount, date, icon, note } = expense;
 
     // Validation Checks
     if (!category.trim()) {
@@ -70,6 +70,7 @@ const Expense = () => {
         amount,
         date,
         icon,
+        note,
       });
 
       setOpenAddExpenseModal(false);

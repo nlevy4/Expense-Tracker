@@ -45,7 +45,7 @@ const Income = () => {
 
   // Handle Add Income
   const handleAddIncome = async (income) => {
-    const { source, amount, date, icon } = income;
+    const { source, amount, date, icon, note } = income;
 
     // Validation Checks
     if (!source.trim()) {
@@ -69,6 +69,7 @@ const Income = () => {
         amount,
         date,
         icon,
+        note,
       });
 
       setOpenAddIncomeModal(false);

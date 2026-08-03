@@ -12,6 +12,7 @@ const TransactionInfoCard = ({
   date,
   amount,
   type,
+  note,
   hideDeleteBtn,
   onDelete
 }) => {
@@ -34,6 +35,7 @@ const TransactionInfoCard = ({
         <div>
           <p className="text-sm text-slate-200 font-medium">{title}</p>
           <p className="text-xs text-slate-500 mt-1">{date}</p>
+          {note && <p className="text-xs text-slate-400 mt-1 italic">{note}</p>}
         </div>
 
         <div className="flex items-center gap-2">

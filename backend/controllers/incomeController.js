@@ -6,7 +6,7 @@ const STORE = "income";
 // Add Income
 exports.addIncome = async (req, res) => {
   try {
-    const { icon, source, amount, date } = req.body;
+    const { icon, source, amount, date, note } = req.body;
 
     if (!source || !amount || !date) {
       return res.status(400).json({ message: "All fields are required" });
@@ -17,6 +17,7 @@ exports.addIncome = async (req, res) => {
       source,
       amount: Number(amount),
       date: new Date(date).toISOString(),
+      note: note || "",
     });
 
     res.status(200).json(newIncome);
@@ -58,6 +59,7 @@ exports.downloadIncomeExcel = async (req, res) => {
       Source: item.source,
       Amount: item.amount,
       Date: item.date,
+      Note: item.note || "",
     }));
 
     const wb = xlsx.utils.book_new();
