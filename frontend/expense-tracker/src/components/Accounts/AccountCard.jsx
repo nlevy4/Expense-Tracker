@@ -72,6 +72,9 @@ const AccountCard = ({
             >
               <span className="text-sm text-slate-500">
                 {moment(entry.date).format("Do MMM YYYY")}
+                {entry.note && (
+                  <span className="text-slate-600 italic"> · {entry.note}</span>
+                )}
               </span>
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-slate-200">

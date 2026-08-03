@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
-import { LuPlus } from "react-icons/lu";
+import { LuPlus, LuArrowLeftRight } from "react-icons/lu";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import Modal from "../../components/Modal";
 import AddAccountForm from "../../components/Accounts/AddAccountForm";
+import TransferForm from "../../components/Accounts/TransferForm";
 import AccountCard from "../../components/Accounts/AccountCard";
 import toast from "react-hot-toast";
 import { addThousandsSeparator } from "../../utils/helper";
@@ -13,6 +14,7 @@ const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openAddAccountModal, setOpenAddAccountModal] = useState(false);
+  const [openTransferModal, setOpenTransferModal] = useState(false);
 
   const fetchAccounts = async () => {
     if (loading) return;
@@ -100,6 +102,42 @@ const Accounts = () => {
     }
   };
 
+  const handleTransfer = async (transfer) => {
+    const { fromAccountId, toAccountId, amount, date } = transfer;
+
+    if (fromAccountId === toAccountId) {
+      toast.error("Choose two different accounts.");
+      return;
+    }
+
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+      toast.error("Amount should be a valid number greater than 0.");
+      return;
+    }
+
+    if (!date) {
+      toast.error("Date is required.");
+      return;
+    }
+
+    try {
+      await axiosInstance.post(API_PATHS.ACCOUNTS.TRANSFER, {
+        fromAccountId,
+        toAccountId,
+        amount,
+        date,
+      });
+
+      setOpenTransferModal(false);
+      toast.success("Transfer complete");
+      fetchAccounts();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Error transferring funds"
+      );
+    }
+  };
+
   const handleDeleteAccount = async (accountId) => {
     try {
       await axiosInstance.delete(API_PATHS.ACCOUNTS.DELETE_ACCOUNT(accountId));
@@ -152,10 +190,22 @@ const Accounts = () => {
             </p>
           </div>
 
-          <button className="add-btn" onClick={() => setOpenAddAccountModal(true)}>
-            <LuPlus className="text-lg" />
-            Add Account
-          </button>
+          <div className="flex items-center gap-2">
+            {accounts.length >= 2 && (
+              <button
+                className="add-btn"
+                onClick={() => setOpenTransferModal(true)}
+              >
+                <LuArrowLeftRight className="text-lg" />
+                Transfer
+              </button>
+            )}
+
+            <button className="add-btn" onClick={() => setOpenAddAccountModal(true)}>
+              <LuPlus className="text-lg" />
+              Add Account
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -176,6 +226,14 @@ const Accounts = () => {
           title="Add Account"
         >
           <AddAccountForm onAddAccount={handleAddAccount} />
+        </Modal>
+
+        <Modal
+          isOpen={openTransferModal}
+          onClose={() => setOpenTransferModal(false)}
+          title="Transfer Between Accounts"
+        >
+          <TransferForm accounts={accounts} onTransfer={handleTransfer} />
         </Modal>
       </div>
     </DashboardLayout>

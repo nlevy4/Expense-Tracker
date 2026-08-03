@@ -23,6 +23,7 @@ export const API_PATHS = {
     ADD_ACCOUNT: "/api/v1/accounts/add",
     GET_ALL_ACCOUNTS: "/api/v1/accounts/get",
     ADD_BALANCE: (accountId) => `/api/v1/accounts/${accountId}/balance`,
+    TRANSFER: "/api/v1/accounts/transfer",
     DELETE_ACCOUNT: (accountId) => `/api/v1/accounts/${accountId}`,
     DELETE_HISTORY: (accountId, historyId) =>
       `/api/v1/accounts/${accountId}/history/${historyId}`,

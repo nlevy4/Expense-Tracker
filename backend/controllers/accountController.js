@@ -95,6 +95,65 @@ exports.addBalanceEntry = async (req, res) => {
   }
 };
 
+// Transfer Funds Between Two Accounts
+exports.transferBetweenAccounts = async (req, res) => {
+  try {
+    const { fromAccountId, toAccountId, amount, date } = req.body;
+
+    if (!fromAccountId || !toAccountId || !amount || !date) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (fromAccountId === toAccountId) {
+      return res.status(400).json({ message: "Choose two different accounts" });
+    }
+
+    const transferAmount = Number(amount);
+
+    if (!transferAmount || transferAmount <= 0) {
+      return res.status(400).json({ message: "Amount must be greater than 0" });
+    }
+
+    const accounts = await readAll(STORE);
+    const fromAccount = accounts.find((acc) => acc._id === fromAccountId);
+    const toAccount = accounts.find((acc) => acc._id === toAccountId);
+
+    if (!fromAccount || !toAccount) {
+      return res.status(404).json({ message: "Account not found" });
+    }
+
+    const fromBalance = withComputedBalance(fromAccount).balance;
+    const toBalance = withComputedBalance(toAccount).balance;
+    const isoDate = new Date(date).toISOString();
+    const createdAt = new Date().toISOString();
+
+    fromAccount.history.push({
+      _id: crypto.randomUUID(),
+      balance: fromBalance - transferAmount,
+      date: isoDate,
+      createdAt,
+      note: `Transfer to ${toAccount.name}`,
+    });
+
+    toAccount.history.push({
+      _id: crypto.randomUUID(),
+      balance: toBalance + transferAmount,
+      date: isoDate,
+      createdAt,
+      note: `Transfer from ${fromAccount.name}`,
+    });
+
+    await writeAll(STORE, accounts);
+
+    res.status(200).json({
+      from: withComputedBalance(fromAccount),
+      to: withComputedBalance(toAccount),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 // Delete a Balance Entry from an Account's History
 exports.deleteHistoryEntry = async (req, res) => {
   try {
