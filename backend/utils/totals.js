@@ -30,7 +30,10 @@ const computeTotals = async () => {
     totalIncome,
     totalExpense,
     totalAccountsBalance,
-    netWorth: totalIncome - totalExpense + totalAccountsBalance,
+    // Income is assumed to land in an account (e.g. Checking) and get
+    // reflected there via a balance update, so it isn't added again here -
+    // net worth is just the accounts total, not accounts + income - expense.
+    netWorth: totalAccountsBalance,
   };
 };
 

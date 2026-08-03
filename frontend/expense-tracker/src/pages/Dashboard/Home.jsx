@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import { LuHandCoins, LuWalletMinimal, LuLandmark } from "react-icons/lu";
+import { LuHandCoins, LuWalletMinimal } from "react-icons/lu";
 import { IoMdCard } from "react-icons/io";
 
 import { useNavigate } from "react-router-dom";
@@ -55,7 +55,7 @@ const Home = () => {
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className="my-5 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <InfoCard
             icon={<IoMdCard />}
             label="Net Worth"
@@ -76,13 +76,6 @@ const Home = () => {
             value={addThousandsSeparator(dashboardData?.totalExpenses || 0)}
             color="bg-red-500"
           />
-
-          <InfoCard
-            icon={<LuLandmark />}
-            label="Accounts Balance"
-            value={addThousandsSeparator(dashboardData?.totalAccountsBalance || 0)}
-            color="bg-green-500"
-          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -92,7 +85,7 @@ const Home = () => {
                 <div>
                   <h5 className="text-lg">Net Worth Over Time</h5>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Combined balance across income, expenses, and every account.
+                    Combined balance across every account, over time.
                   </p>
                 </div>
               </div>
