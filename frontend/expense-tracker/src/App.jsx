@@ -12,6 +12,7 @@ import Income from "./pages/Dashboard/Income";
 import Expense from "./pages/Dashboard/Expense";
 import Accounts from "./pages/Dashboard/Accounts";
 import Data from "./pages/Dashboard/Data";
+import History from "./pages/Dashboard/History";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
           <Route path="/expense" exact element={<Expense />} />
           <Route path="/accounts" exact element={<Accounts />} />
           <Route path="/data" exact element={<Data />} />
+          <Route path="/history" exact element={<History />} />
         </Routes>
       </Router>
 

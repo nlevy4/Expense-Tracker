@@ -6,6 +6,7 @@ const expenseRoutes = require("./routes/expenseRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const accountRoutes = require("./routes/accountRoutes");
 const dataRoutes = require("./routes/dataRoutes");
+const netWorthRoutes = require("./routes/netWorthRoutes");
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/api/v1/expense", expenseRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/accounts", accountRoutes);
 app.use("/api/v1/data", dataRoutes);
+app.use("/api/v1/networth", netWorthRoutes);
 
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;

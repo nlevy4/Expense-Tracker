@@ -32,4 +32,9 @@ export const API_PATHS = {
     EXPORT: "/api/v1/data/export",
     IMPORT: "/api/v1/data/import",
   },
+  NETWORTH: {
+    ADD_SNAPSHOT: "/api/v1/networth/add",
+    GET_ALL_SNAPSHOTS: "/api/v1/networth/get",
+    DELETE_SNAPSHOT: (snapshotId) => `/api/v1/networth/${snapshotId}`,
+  },
 };

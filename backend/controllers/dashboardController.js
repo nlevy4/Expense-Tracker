@@ -1,13 +1,4 @@
-const { readAll } = require("../utils/jsonStore");
-
-const getLatestBalance = (history) => {
-  const sorted = [...history].sort(
-    (a, b) =>
-      new Date(b.date) - new Date(a.date) ||
-      new Date(b.createdAt) - new Date(a.createdAt)
-  );
-  return sorted[0]?.balance ?? 0;
-};
+const { getLatestBalance, computeTotals } = require("../utils/totals");
 
 // Combine every account's balance history into a single net worth timeline
 const buildNetWorthHistory = (accounts) => {
@@ -36,18 +27,15 @@ const buildNetWorthHistory = (accounts) => {
 // dashboard data
 exports.getDashboardData = async (req, res) => {
   try {
-    const [income, expense, accounts] = await Promise.all([
-      readAll("income"),
-      readAll("expense"),
-      readAll("accounts"),
-    ]);
-
-    const totalIncome = income.reduce((sum, txn) => sum + txn.amount, 0);
-    const totalExpense = expense.reduce((sum, txn) => sum + txn.amount, 0);
-    const totalAccountsBalance = accounts.reduce(
-      (sum, account) => sum + getLatestBalance(account.history),
-      0
-    );
+    const {
+      income,
+      expense,
+      accounts,
+      totalIncome,
+      totalExpense,
+      totalAccountsBalance,
+      netWorth,
+    } = await computeTotals();
 
     const sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000);
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -82,7 +70,7 @@ exports.getDashboardData = async (req, res) => {
     ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     res.json({
-      totalBalance: totalIncome - totalExpense + totalAccountsBalance,
+      totalBalance: netWorth,
       totalIncome,
       totalExpenses: totalExpense,
       totalAccountsBalance,
