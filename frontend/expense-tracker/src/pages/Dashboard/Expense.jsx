@@ -15,6 +15,7 @@ const Expense = () => {
   const navigate = useNavigate();
 
   const [expenseData, setExpenseData] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
@@ -44,9 +45,24 @@ const Expense = () => {
     }
   };
 
+  // Get All Accounts (for the "subtract from account" picker)
+  const fetchAccounts = async () => {
+    try {
+      const response = await axiosInstance.get(
+        API_PATHS.ACCOUNTS.GET_ALL_ACCOUNTS
+      );
+
+      if (response.data) {
+        setAccounts(response.data);
+      }
+    } catch (error) {
+      console.log("Something went wrong. Please try again.", error);
+    }
+  };
+
   // Handle Add Expense
   const handleAddExpense = async (expense) => {
-    const { category, amount, date, icon, note } = expense;
+    const { category, amount, date, icon, note, accountId } = expense;
 
     // Validation Checks
     if (!category.trim()) {
@@ -71,6 +87,7 @@ const Expense = () => {
         date,
         icon,
         note,
+        accountId: accountId || undefined,
       });
 
       setOpenAddExpenseModal(false);
@@ -127,6 +144,7 @@ const Expense = () => {
 
   useEffect(() => {
     fetchExpenseDetails();
+    fetchAccounts();
 
     return () => {};
   }, []);
@@ -155,7 +173,7 @@ const Expense = () => {
             onClose={() => setOpenAddExpenseModal(false)}
             title="Add Expense"
           >
-            <AddExpenseForm onAddExpense={handleAddExpense} />
+            <AddExpenseForm onAddExpense={handleAddExpense} accounts={accounts} />
           </Modal>
 
           <Modal

@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import Input from "../Inputs/Input";
 import EmojiPickerPopup from "../EmojiPickerPopup";
 
-const AddExpenseForm = ({onAddExpense}) => {
+const AddExpenseForm = ({onAddExpense, accounts = []}) => {
   const [income, setIncome] = useState({
     category: "",
     amount: "",
     date: "",
     icon: "",
     note: "",
+    accountId: "",
   });
 
   const handleChange = (key, value) => setIncome({ ...income, [key]: value });
@@ -51,6 +52,20 @@ const AddExpenseForm = ({onAddExpense}) => {
         placeholder="Optional note"
         type="text"
       />
+
+      <label className="text-[13px] text-slate-300">Subtract from Account</label>
+      <select
+        className="input-box"
+        value={income.accountId}
+        onChange={(e) => handleChange("accountId", e.target.value)}
+      >
+        <option value="">Don't update an account balance</option>
+        {accounts.map((account) => (
+          <option key={account._id} value={account._id}>
+            {account.name}
+          </option>
+        ))}
+      </select>
 
       <div className="flex justify-end mt-6">
         <button

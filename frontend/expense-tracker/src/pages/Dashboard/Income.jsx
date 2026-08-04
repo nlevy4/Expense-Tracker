@@ -14,6 +14,7 @@ import DeleteAlert from "../../components/DeleteAlert";
 
 const Income = () => {
   const [incomeData, setIncomeData] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false);
@@ -43,9 +44,24 @@ const Income = () => {
     }
   };
 
+  // Get All Accounts (for the "add to account" picker)
+  const fetchAccounts = async () => {
+    try {
+      const response = await axiosInstance.get(
+        API_PATHS.ACCOUNTS.GET_ALL_ACCOUNTS
+      );
+
+      if (response.data) {
+        setAccounts(response.data);
+      }
+    } catch (error) {
+      console.log("Something went wrong. Please try again.", error);
+    }
+  };
+
   // Handle Add Income
   const handleAddIncome = async (income) => {
-    const { source, amount, date, icon, note } = income;
+    const { source, amount, date, icon, note, accountId } = income;
 
     // Validation Checks
     if (!source.trim()) {
@@ -70,6 +86,7 @@ const Income = () => {
         date,
         icon,
         note,
+        accountId: accountId || undefined,
       });
 
       setOpenAddIncomeModal(false);
@@ -126,6 +143,7 @@ const Income = () => {
 
   useEffect(() => {
     fetchIncomeDetails();
+    fetchAccounts();
     return () => {};
   }, []);
 
@@ -153,7 +171,7 @@ const Income = () => {
             onClose={() => setOpenAddIncomeModal(false)}
             title="Add Income"
           >
-            <AddIncomeForm onAddIncome={handleAddIncome} />
+            <AddIncomeForm onAddIncome={handleAddIncome} accounts={accounts} />
           </Modal>
 
           <Modal

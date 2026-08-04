@@ -1,15 +1,30 @@
 const xlsx = require("xlsx");
 const { readAll, insert, removeById } = require("../utils/jsonStore");
+const { applyAccountDelta, revertAccountEntry } = require("../utils/accountBalance");
 
 const STORE = "expense";
 
 // Add Expense
 exports.addExpense = async (req, res) => {
   try {
-    const { icon, category, amount, date, note } = req.body;
+    const { icon, category, amount, date, note, accountId } = req.body;
 
     if (!category || !amount || !date) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    let accountHistoryEntryId = null;
+    if (accountId) {
+      accountHistoryEntryId = await applyAccountDelta(
+        accountId,
+        -Number(amount),
+        date,
+        `Expense: ${category}`
+      );
+
+      if (!accountHistoryEntryId) {
+        return res.status(404).json({ message: "Account not found" });
+      }
     }
 
     const newExpense = await insert(STORE, {
@@ -18,6 +33,8 @@ exports.addExpense = async (req, res) => {
       amount: Number(amount),
       date: new Date(date).toISOString(),
       note: note || "",
+      accountId: accountId || null,
+      accountHistoryEntryId,
     });
 
     res.status(200).json(newExpense);
@@ -41,6 +58,14 @@ exports.getAllExpenses = async (req, res) => {
 // Delete Expense
 exports.deleteExpense = async (req, res) => {
   try {
+    const expense = (await readAll(STORE)).find(
+      (item) => item._id === req.params.id
+    );
+
+    if (expense?.accountId) {
+      await revertAccountEntry(expense.accountId, expense.accountHistoryEntryId);
+    }
+
     await removeById(STORE, req.params.id);
     res.json({ message: "Expense deleted successfully" });
   } catch (error) {
