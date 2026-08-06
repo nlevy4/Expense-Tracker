@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const { readAll, writeAll } = require("../utils/jsonStore");
-const { computeTotals } = require("../utils/totals");
+const { computeTotals, getLatestBalance } = require("../utils/totals");
 
 const STORE = "networth";
 
@@ -25,7 +25,7 @@ exports.addSnapshot = async (req, res) => {
       return res.status(400).json({ message: "Date is required" });
     }
 
-    const { netWorth, totalAccountsBalance, totalIncome, totalExpense } =
+    const { netWorth, totalAccountsBalance, totalIncome, totalExpense, accounts } =
       await computeTotals();
 
     const snapshots = await readAll(STORE);
@@ -37,6 +37,14 @@ exports.addSnapshot = async (req, res) => {
       accountsBalance: totalAccountsBalance,
       totalIncome,
       totalExpense,
+      // Freeze each account's balance at snapshot time, same as accountsBalance,
+      // so the breakdown stays accurate even if accounts are later renamed,
+      // rebalanced, or deleted.
+      accounts: accounts.map((account) => ({
+        _id: account._id,
+        name: account.name,
+        balance: getLatestBalance(account.history),
+      })),
       createdAt: new Date().toISOString(),
     };
 
