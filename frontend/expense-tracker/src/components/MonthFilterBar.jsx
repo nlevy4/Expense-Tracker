@@ -1,5 +1,6 @@
 import React from "react";
 import moment from "moment";
+import { LuChevronDown } from "react-icons/lu";
 
 // Builds a descending list of "MMM YYYY" months present in the transactions
 export const getAvailableMonths = (transactions) => {
@@ -24,31 +25,20 @@ const MonthFilterBar = ({ transactions, selectedMonth, onSelectMonth }) => {
   const months = getAvailableMonths(transactions);
 
   return (
-    <div className="flex items-center gap-2 mt-3 overflow-x-auto pb-1">
-      <button
-        className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
-          selectedMonth === "All"
-            ? "bg-primary text-white"
-            : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-        }`}
-        onClick={() => onSelectMonth("All")}
+    <div className="relative mt-3 w-full sm:w-56">
+      <select
+        className="w-full appearance-none text-sm text-slate-100 bg-slate-800/70 border border-slate-700 rounded-lg pl-3 pr-9 py-2 outline-none focus:border-primary/60 cursor-pointer transition-colors"
+        value={selectedMonth}
+        onChange={(e) => onSelectMonth(e.target.value)}
       >
-        All
-      </button>
-
-      {months.map((month) => (
-        <button
-          key={month}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
-            selectedMonth === month
-              ? "bg-primary text-white"
-              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-          }`}
-          onClick={() => onSelectMonth(month)}
-        >
-          {month}
-        </button>
-      ))}
+        <option value="All">All months</option>
+        {months.map((month) => (
+          <option key={month} value={month}>
+            {month}
+          </option>
+        ))}
+      </select>
+      <LuChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-base" />
     </div>
   );
 };
