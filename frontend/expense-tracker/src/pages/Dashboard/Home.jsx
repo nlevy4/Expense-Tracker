@@ -12,14 +12,10 @@ import { addThousandsSeparator } from "../../utils/helper";
 import RecentTransactions from "../../components/Dashboard/RecentTransactions";
 import FinanceOverview from "../../components/Dashboard/FinanceOverview";
 import ExpenseTransactions from "../../components/Dashboard/ExpenseTransactions";
-import Last30DaysExpenses from "../../components/Dashboard/Last30DaysExpenses";
 import RecentIncome from "../../components/Dashboard/RecentIncome";
-import RecentIncomeWithChart from "../../components/Dashboard/RecentIncomeWithChart";
 import AccountsOverview from "../../components/Dashboard/AccountsOverview";
-import CustomPieChart from "../../components/Charts/CustomPieChart";
 import NetWorthChart from "../../components/Charts/NetWorthChart";
 import IncomeExpenseChart from "../../components/Charts/IncomeExpenseChart";
-import { prepareExpensePieChartData } from "../../utils/helper";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -131,19 +127,6 @@ const Home = () => {
           <ExpenseTransactions
             transactions={dashboardData?.last30DaysExpenses?.transactions || []}
             onSeeMore={() => navigate("/expense")}
-          />
-
-          <CustomPieChart
-            data={prepareExpensePieChartData(dashboardData?.last30DaysExpenses?.transactions || [])}
-            label="Last 30 Days Expenses"
-            totalAmount={`$${dashboardData?.last30DaysExpenses?.total || 0}`}
-            showTextAnchor
-            colors={["#FA2C37", "#FF6900", "#875CF5", "#10B981", "#3B82F6"]}
-          />
-
-          <RecentIncomeWithChart
-            data={dashboardData?.last60DaysIncome?.transactions?.slice(0,4) || []}
-            totalIncome={dashboardData?.totalIncome || 0}
           />
 
           <RecentIncome
