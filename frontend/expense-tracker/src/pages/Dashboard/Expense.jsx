@@ -7,6 +7,7 @@ import { API_PATHS } from "../../utils/apiPaths";
 import ExpenseList from "../../components/Expense/ExpenseList";
 import ExpenseOverview from "../../components/Expense/ExpenseOverview";
 import AddExpenseForm from "../../components/Expense/AddExpenseForm";
+import SplitExpenseForm from "../../components/Expense/SplitExpenseForm";
 import DeleteAlert from "../../components/DeleteAlert";
 import Modal from "../../components/Modal";
 import toast from "react-hot-toast";
@@ -19,6 +20,7 @@ const Expense = () => {
   const [loading, setLoading] = useState(false);
 
   const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
+  const [openSplitExpenseModal, setOpenSplitExpenseModal] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
     data: null,
@@ -101,6 +103,65 @@ const Expense = () => {
     }
   };
 
+  // Handle Split Expense (one credit card statement broken into categories)
+  const handleSplitExpense = async ({ date, accountId, totalAmount, rows }) => {
+    if (!date) {
+      toast.error("Date is required.");
+      return;
+    }
+
+    const cleanRows = rows
+      .map((row) => ({ category: row.category.trim(), amount: Number(row.amount) }))
+      .filter((row) => row.category && row.amount > 0);
+
+    if (cleanRows.length === 0) {
+      toast.error("Add at least one category with an amount.");
+      return;
+    }
+
+    const allocated = cleanRows.reduce((sum, row) => sum + row.amount, 0);
+    const total = Number(totalAmount);
+
+    if (!total || total <= 0) {
+      toast.error("Statement total should be a valid number greater than 0.");
+      return;
+    }
+
+    if (Math.abs(allocated - total) >= 0.01) {
+      toast.error(
+        `Categories add up to $${allocated.toLocaleString()}, but the statement total is $${total.toLocaleString()}.`
+      );
+      return;
+    }
+
+    try {
+      // Sequential, not Promise.all: each request reads-then-writes the
+      // account's balance history, so concurrent requests would race and
+      // drop updates.
+      for (const row of cleanRows) {
+        await axiosInstance.post(API_PATHS.EXPENSE.ADD_EXPENSE, {
+          category: row.category,
+          amount: row.amount,
+          date,
+          icon: "",
+          note: "Credit card split",
+          accountId: accountId || undefined,
+        });
+      }
+
+      setOpenSplitExpenseModal(false);
+      toast.success("Expense split added successfully");
+      fetchExpenseDetails();
+    } catch (error) {
+      console.error(
+        "Error adding split expense:",
+        error.response?.data?.message || error.message
+      );
+      toast.error("Something went wrong splitting the expense.");
+      fetchExpenseDetails();
+    }
+  };
+
   // Delete Expense
   const deleteExpense = async (id) => {
     try {
@@ -157,6 +218,7 @@ const Expense = () => {
             <ExpenseOverview
               transactions={expenseData}
               onExpenseIncome={() => setOpenAddExpenseModal(true)}
+              onSplitExpense={() => setOpenSplitExpenseModal(true)}
             />
           </div>
 
@@ -174,6 +236,17 @@ const Expense = () => {
             title="Add Expense"
           >
             <AddExpenseForm onAddExpense={handleAddExpense} accounts={accounts} />
+          </Modal>
+
+          <Modal
+            isOpen={openSplitExpenseModal}
+            onClose={() => setOpenSplitExpenseModal(false)}
+            title="Split Credit Card Charge"
+          >
+            <SplitExpenseForm
+              onAddSplitExpense={handleSplitExpense}
+              accounts={accounts}
+            />
           </Modal>
 
           <Modal
