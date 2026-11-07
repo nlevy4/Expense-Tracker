@@ -16,6 +16,15 @@ const NetWorthChart = ({ data }) => {
     total,
   }));
 
+  // Zoom the Y axis to the actual range instead of always starting at 0,
+  // so week-to-week movement is visible instead of a near-flat line
+  const totals = chartData.map((point) => point.total);
+  const minTotal = Math.min(...totals);
+  const maxTotal = Math.max(...totals);
+  const range = maxTotal - minTotal;
+  const padding = range > 0 ? range * 0.15 : Math.max(Math.abs(maxTotal) * 0.1, 10);
+  const yDomain = [Math.floor(minTotal - padding), Math.ceil(maxTotal + padding)];
+
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
@@ -43,7 +52,7 @@ const NetWorthChart = ({ data }) => {
 
           <CartesianGrid stroke="none" />
           <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#94a3b8" }} stroke="none" />
-          <YAxis tick={{ fontSize: 12, fill: "#94a3b8" }} stroke="none" />
+          <YAxis domain={yDomain} tick={{ fontSize: 12, fill: "#94a3b8" }} stroke="none" />
           <Tooltip content={<CustomTooltip />} />
 
           <Area type="monotone" dataKey="total" stroke="#8b6cf6" fill="url(#netWorthGradient)" strokeWidth={3} dot={{ r: 3, fill: "#ab8df8" }} />
