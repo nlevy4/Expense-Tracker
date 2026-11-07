@@ -2,16 +2,25 @@ import { XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaCh
 import moment from "moment";
 
 const NetWorthChart = ({ data }) => {
-  const chartData = data.map((point) => ({
-    label: moment(point.date).format("Do MMM"),
-    total: point.total,
+  // Bucket by week, keeping the latest known total as of each week
+  // (data is sorted ascending, so later entries overwrite earlier ones)
+  const weekMap = new Map();
+  data.forEach((point) => {
+    const weekStart = moment(point.date).startOf("isoWeek").format("YYYY-MM-DD");
+    weekMap.set(weekStart, point.total);
+  });
+
+  const chartData = Array.from(weekMap.entries()).map(([weekStart, total]) => ({
+    label: moment(weekStart).format("Do MMM"),
+    weekLabel: `Week of ${moment(weekStart).format("Do MMM")}`,
+    total,
   }));
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-slate-800 shadow-lg shadow-black/30 rounded-lg p-2 border border-slate-700">
-          <p className="text-xs font-semibold text-purple-300 mb-1">{payload[0].payload.label}</p>
+          <p className="text-xs font-semibold text-purple-300 mb-1">{payload[0].payload.weekLabel}</p>
           <p className="text-sm text-slate-300">
             Net Worth: <span className="text-sm font-medium text-slate-100">${payload[0].payload.total}</span>
           </p>
