@@ -24,6 +24,45 @@ const buildNetWorthHistory = (accounts) => {
   return points;
 };
 
+const MONTH_LABELS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+// Group income + expense totals by calendar month, oldest first
+const buildMonthlyOverview = (income, expense) => {
+  const months = {};
+
+  const addTo = (txns, key) => {
+    txns.forEach((txn) => {
+      const date = new Date(txn.date);
+      const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+
+      if (!months[monthKey]) {
+        months[monthKey] = {
+          year: date.getFullYear(),
+          monthIndex: date.getMonth(),
+          income: 0,
+          expense: 0,
+        };
+      }
+
+      months[monthKey][key] += txn.amount;
+    });
+  };
+
+  addTo(income, "income");
+  addTo(expense, "expense");
+
+  return Object.values(months)
+    .sort((a, b) => a.year - b.year || a.monthIndex - b.monthIndex)
+    .map((entry) => ({
+      month: `${MONTH_LABELS[entry.monthIndex]} ${entry.year}`,
+      income: entry.income,
+      expense: entry.expense,
+    }));
+};
+
 // dashboard data
 exports.getDashboardData = async (req, res) => {
   try {
@@ -81,6 +120,7 @@ exports.getDashboardData = async (req, res) => {
         balance: getLatestBalance(account.history),
       })),
       netWorthHistory: buildNetWorthHistory(accounts),
+      monthlyOverview: buildMonthlyOverview(income, expense),
       last30DaysExpenses: {
         total: expensesLast30Days,
         transactions: last30DaysExpenseTransactions,

@@ -18,6 +18,7 @@ import RecentIncomeWithChart from "../../components/Dashboard/RecentIncomeWithCh
 import AccountsOverview from "../../components/Dashboard/AccountsOverview";
 import CustomPieChart from "../../components/Charts/CustomPieChart";
 import NetWorthChart from "../../components/Charts/NetWorthChart";
+import IncomeExpenseChart from "../../components/Charts/IncomeExpenseChart";
 import { prepareExpensePieChartData } from "../../utils/helper";
 
 const Home = () => {
@@ -79,6 +80,21 @@ const Home = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {dashboardData?.monthlyOverview?.length > 0 && (
+            <div className="card md:col-span-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h5 className="text-lg">Income vs Expenses</h5>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    See how much you earned and spent each month, side by side.
+                  </p>
+                </div>
+              </div>
+
+              <IncomeExpenseChart data={dashboardData.monthlyOverview} />
+            </div>
+          )}
+
           {dashboardData?.netWorthHistory?.length > 1 && (
             <div className="card md:col-span-2">
               <div className="flex items-center justify-between">
