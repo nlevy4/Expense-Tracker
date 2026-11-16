@@ -57,6 +57,7 @@ const IncomeList = ({ transactions, onDelete, onDownload }) => {
             date={moment(income.date).format("Do MMM YYYY")}
             amount={income.amount}
             note={income.note}
+            category={income.category}
             type="income"
             onDelete={() => onDelete(income._id)}
           />

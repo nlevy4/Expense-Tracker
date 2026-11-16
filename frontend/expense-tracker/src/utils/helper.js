@@ -72,3 +72,15 @@ export const prepareExpensePieChartData = (data = []) => {
   });
   return Object.entries(categoryMap).map(([name, amount]) => ({ name, amount }));
 };
+
+export const prepareIncomeCategoryPieChartData = (data = []) => {
+  const categoryMap = {};
+  data.forEach(item => {
+    const category = item.category || "Uncategorized";
+    if (!categoryMap[category]) {
+      categoryMap[category] = 0;
+    }
+    categoryMap[category] += Number(item.amount);
+  });
+  return Object.entries(categoryMap).map(([name, amount]) => ({ name, amount }));
+};

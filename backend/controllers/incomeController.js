@@ -7,7 +7,7 @@ const STORE = "income";
 // Add Income
 exports.addIncome = async (req, res) => {
   try {
-    const { icon, source, amount, date, note, accountId } = req.body;
+    const { icon, source, category, amount, date, note, accountId } = req.body;
 
     if (!source || !amount || !date) {
       return res.status(400).json({ message: "All fields are required" });
@@ -30,6 +30,7 @@ exports.addIncome = async (req, res) => {
     const newIncome = await insert(STORE, {
       icon,
       source,
+      category: category || "Uncategorized",
       amount: Number(amount),
       date: new Date(date).toISOString(),
       note: note || "",
@@ -82,6 +83,7 @@ exports.downloadIncomeExcel = async (req, res) => {
 
     const data = income.map((item) => ({
       Source: item.source,
+      Category: item.category || "Uncategorized",
       Amount: item.amount,
       Date: item.date,
       Note: item.note || "",

@@ -1,6 +1,6 @@
 import React from "react";
 
-const CustomLegend = ({ payload }) => {
+const CustomLegend = ({ payload, showAmount }) => {
   return (
     <div className="flex flex-wrap justify-center gap-2 mt-4 space-x-6">
       {payload.map((entry, index) => (
@@ -11,6 +11,12 @@ const CustomLegend = ({ payload }) => {
           ></div>
           <span className="text-xs text-slate-300 font-medium">
             {entry.value}
+            {showAmount && (
+              <span className="text-slate-500">
+                {" "}
+                (${Number(entry.payload?.amount || 0).toLocaleString()})
+              </span>
+            )}
           </span>
         </div>
       ))}

@@ -2,9 +2,19 @@ import React, { useState } from "react";
 import Input from "../Inputs/Input";
 import EmojiPickerPopup from "../EmojiPickerPopup";
 
+export const INCOME_CATEGORIES = [
+  "Job",
+  "Online Work",
+  "Gifts",
+  "Financial Aid",
+  "Friend Repayment",
+  "Other",
+];
+
 const AddIncomeForm = ({onAddIncome, accounts = []}) => {
   const [income, setIncome] = useState({
     source: "",
+    category: "",
     amount: "",
     date: "",
     icon: "",
@@ -28,6 +38,20 @@ const AddIncomeForm = ({onAddIncome, accounts = []}) => {
         placeholder="Freelance, Salary, etc"
         type="text"
       />
+
+      <label className="text-[13px] text-slate-300">Category</label>
+      <select
+        className="input-box"
+        value={income.category}
+        onChange={(e) => handleChange("category", e.target.value)}
+      >
+        <option value="">Select a category</option>
+        {INCOME_CATEGORIES.map((category) => (
+          <option key={category} value={category}>
+            {category}
+          </option>
+        ))}
+      </select>
 
       <Input
         value={income.amount}

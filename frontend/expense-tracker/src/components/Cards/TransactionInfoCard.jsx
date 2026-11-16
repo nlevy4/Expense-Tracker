@@ -13,6 +13,7 @@ const TransactionInfoCard = ({
   amount,
   type,
   note,
+  category,
   hideDeleteBtn,
   onDelete
 }) => {
@@ -34,7 +35,14 @@ const TransactionInfoCard = ({
       <div className="flex-1 flex items-center justify-between">
         <div>
           <p className="text-sm text-slate-200 font-medium">{title}</p>
-          <p className="text-xs text-slate-500 mt-1">{date}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-xs text-slate-500">{date}</p>
+            {category && (
+              <span className="text-[10px] uppercase tracking-wide text-purple-300 bg-purple-500/10 border border-purple-500/20 rounded px-1.5 py-0.5">
+                {category}
+              </span>
+            )}
+          </div>
           {note && <p className="text-xs text-slate-400 mt-1 italic">{note}</p>}
         </div>
 

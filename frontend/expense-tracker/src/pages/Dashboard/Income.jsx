@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import IncomeOverview from "../../components/Income/IncomeOverview";
+import IncomeCategoryOverview from "../../components/Income/IncomeCategoryOverview";
 import IncomeList from "../../components/Income/IncomeList";
 import AddIncomeModal from "../../components/Income/AddIncomeForm";
 import Modal from "../../components/Modal";
@@ -61,11 +62,16 @@ const Income = () => {
 
   // Handle Add Income
   const handleAddIncome = async (income) => {
-    const { source, amount, date, icon, note, accountId } = income;
+    const { source, category, amount, date, icon, note, accountId } = income;
 
     // Validation Checks
     if (!source.trim()) {
       toast.error("Source is required.");
+      return;
+    }
+
+    if (!category) {
+      toast.error("Category is required.");
       return;
     }
 
@@ -82,6 +88,7 @@ const Income = () => {
     try {
       await axiosInstance.post(API_PATHS.INCOME.ADD_INCOME, {
         source,
+        category,
         amount,
         date,
         icon,
@@ -157,6 +164,8 @@ const Income = () => {
               onAddIncome={() => setOpenAddIncomeModal(true)}
             />
           </div>
+
+          <IncomeCategoryOverview transactions={incomeData} />
 
           <IncomeList
             transactions={incomeData}
