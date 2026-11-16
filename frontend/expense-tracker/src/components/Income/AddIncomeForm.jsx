@@ -8,7 +8,7 @@ export const INCOME_CATEGORIES = [
   "Online Work",
   "Gifts",
   "Financial Aid",
-  "Friend Repayment",
+  "Reselling & Repayments",
   "Other",
 ];
 
