@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from "moment";
 import Input from "../Inputs/Input";
 import EmojiPickerPopup from "../EmojiPickerPopup";
 
@@ -11,16 +12,16 @@ export const INCOME_CATEGORIES = [
   "Other",
 ];
 
-const AddIncomeForm = ({onAddIncome, accounts = []}) => {
-  const [income, setIncome] = useState({
-    source: "",
-    category: "",
-    amount: "",
-    date: "",
-    icon: "",
-    note: "",
-    accountId: "",
-  });
+const AddIncomeForm = ({onAddIncome, accounts = [], initialValues, submitLabel = "Add Income"}) => {
+  const [income, setIncome] = useState(() => ({
+    source: initialValues?.source || "",
+    category: initialValues?.category || "",
+    amount: initialValues?.amount ?? "",
+    date: initialValues?.date ? moment(initialValues.date).format("YYYY-MM-DD") : "",
+    icon: initialValues?.icon || "",
+    note: initialValues?.note || "",
+    accountId: initialValues?.accountId || "",
+  }));
 
   const handleChange = (key, value) => setIncome({ ...income, [key]: value });
 
@@ -97,7 +98,7 @@ const AddIncomeForm = ({onAddIncome, accounts = []}) => {
           className="add-btn add-btn-fill"
           onClick={()=>onAddIncome(income)}
         >
-          Add Income
+          {submitLabel}
         </button>
       </div>
     </div>

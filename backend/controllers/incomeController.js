@@ -1,5 +1,5 @@
 const xlsx = require("xlsx");
-const { readAll, insert, removeById } = require("../utils/jsonStore");
+const { readAll, insert, removeById, updateById } = require("../utils/jsonStore");
 const { applyAccountDelta, revertAccountEntry } = require("../utils/accountBalance");
 
 const STORE = "income";
@@ -39,6 +39,58 @@ exports.addIncome = async (req, res) => {
     });
 
     res.status(200).json(newIncome);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// Edit Income
+exports.updateIncome = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { icon, source, category, amount, date, note, accountId } = req.body;
+
+    if (!source || !amount || !date) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const existing = (await readAll(STORE)).find((item) => item._id === id);
+    if (!existing) {
+      return res.status(404).json({ message: "Income not found" });
+    }
+
+    // Undo the old balance effect, then apply the new one, same as a
+    // delete + re-add would - handles amount/date/account all changing.
+    if (existing.accountId) {
+      await revertAccountEntry(existing.accountId, existing.accountHistoryEntryId);
+    }
+
+    let accountHistoryEntryId = null;
+    if (accountId) {
+      accountHistoryEntryId = await applyAccountDelta(
+        accountId,
+        Number(amount),
+        date,
+        `Income: ${source}`
+      );
+
+      if (!accountHistoryEntryId) {
+        return res.status(404).json({ message: "Account not found" });
+      }
+    }
+
+    const updatedIncome = await updateById(STORE, id, {
+      icon,
+      source,
+      category: category || "Uncategorized",
+      amount: Number(amount),
+      date: new Date(date).toISOString(),
+      note: note || "",
+      accountId: accountId || null,
+      accountHistoryEntryId,
+    });
+
+    res.status(200).json(updatedIncome);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }

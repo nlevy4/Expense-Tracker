@@ -66,4 +66,20 @@ const removeById = async (name, id) => {
   return filtered.length !== records.length;
 };
 
-module.exports = { readAll, writeAll, insert, removeById };
+const updateById = async (name, id, updates) => {
+  const records = await readAll(name);
+  let updatedRecord = null;
+
+  const nextRecords = records.map((record) => {
+    if (record._id !== id) return record;
+    updatedRecord = { ...record, ...updates };
+    return updatedRecord;
+  });
+
+  if (!updatedRecord) return null;
+
+  await writeAll(name, nextRecords);
+  return updatedRecord;
+};
+
+module.exports = { readAll, writeAll, insert, removeById, updateById };

@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   addIncome,
+  updateIncome,
   getAllIncome,
   deleteIncome,
   downloadIncomeExcel
@@ -11,6 +12,7 @@ const router = express.Router();
 router.post("/add", addIncome);
 router.get("/get", getAllIncome);
 router.get("/downloadexcel", downloadIncomeExcel);
+router.put("/:id", updateIncome);
 router.delete("/:id", deleteIncome);
 
 

@@ -19,6 +19,7 @@ const Income = () => {
   const [loading, setLoading] = useState(false);
 
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false);
+  const [editingIncome, setEditingIncome] = useState(null);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
     data: null,
@@ -60,30 +61,25 @@ const Income = () => {
     }
   };
 
+  // Shared validation for add + edit
+  const validateIncome = ({ source, category, amount, date }) => {
+    if (!source.trim()) return "Source is required.";
+    if (!category) return "Category is required.";
+    if (!amount || isNaN(amount) || Number(amount) <= 0)
+      return "Amount should be a valid number greater than 0.";
+    if (!date) return "Date is required.";
+    return null;
+  };
+
   // Handle Add Income
   const handleAddIncome = async (income) => {
+    const error = validateIncome(income);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
     const { source, category, amount, date, icon, note, accountId } = income;
-
-    // Validation Checks
-    if (!source.trim()) {
-      toast.error("Source is required.");
-      return;
-    }
-
-    if (!category) {
-      toast.error("Category is required.");
-      return;
-    }
-
-    if (!amount || isNaN(amount) || Number(amount) <= 0) {
-      toast.error("Amount should be a valid number greater than 0.");
-      return;
-    }
-
-    if (!date) {
-      toast.error("Date is required.");
-      return;
-    }
 
     try {
       await axiosInstance.post(API_PATHS.INCOME.ADD_INCOME, {
@@ -104,6 +100,39 @@ const Income = () => {
         "Error adding income:",
         error.response?.data?.message || error.message
       );
+    }
+  };
+
+  // Handle Edit Income
+  const handleUpdateIncome = async (income) => {
+    const error = validateIncome(income);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
+    const { source, category, amount, date, icon, note, accountId } = income;
+
+    try {
+      await axiosInstance.put(API_PATHS.INCOME.UPDATE_INCOME(editingIncome._id), {
+        source,
+        category,
+        amount,
+        date,
+        icon,
+        note,
+        accountId: accountId || undefined,
+      });
+
+      setEditingIncome(null);
+      toast.success("Income updated successfully");
+      fetchIncomeDetails();
+    } catch (error) {
+      console.error(
+        "Error updating income:",
+        error.response?.data?.message || error.message
+      );
+      toast.error("Something went wrong updating that income.");
     }
   };
 
@@ -172,6 +201,7 @@ const Income = () => {
             onDelete={(id) => {
               setOpenDeleteAlert({ show: true, data: id });
             }}
+            onEdit={(income) => setEditingIncome(income)}
             onDownload={handleDownloadIncomeDetails}
           />
 
@@ -181,6 +211,19 @@ const Income = () => {
             title="Add Income"
           >
             <AddIncomeForm onAddIncome={handleAddIncome} accounts={accounts} />
+          </Modal>
+
+          <Modal
+            isOpen={!!editingIncome}
+            onClose={() => setEditingIncome(null)}
+            title="Edit Income"
+          >
+            <AddIncomeForm
+              onAddIncome={handleUpdateIncome}
+              accounts={accounts}
+              initialValues={editingIncome}
+              submitLabel="Save Changes"
+            />
           </Modal>
 
           <Modal

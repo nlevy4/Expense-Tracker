@@ -6,7 +6,7 @@ import MonthFilterBar, {
   filterTransactionsByMonth,
 } from "../MonthFilterBar";
 
-const IncomeList = ({ transactions, onDelete, onDownload }) => {
+const IncomeList = ({ transactions, onDelete, onEdit, onDownload }) => {
   const [selectedMonth, setSelectedMonth] = useState("All");
 
   const filteredTransactions = useMemo(
@@ -60,6 +60,7 @@ const IncomeList = ({ transactions, onDelete, onDownload }) => {
             category={income.category}
             type="income"
             onDelete={() => onDelete(income._id)}
+            onEdit={() => onEdit(income)}
           />
         ))}
       </div>
