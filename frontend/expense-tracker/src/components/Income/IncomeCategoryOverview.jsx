@@ -4,7 +4,7 @@ import { prepareIncomeCategoryPieChartData } from "../../utils/helper";
 
 const COLORS = ["#875CF5", "#10B981", "#FA2C37", "#FF6900", "#3B82F6", "#F59E0B"];
 
-const IncomeCategoryOverview = ({ transactions }) => {
+const IncomeCategoryOverview = ({ transactions, selectedMonth = "All" }) => {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
@@ -20,14 +20,16 @@ const IncomeCategoryOverview = ({ transactions }) => {
         <div>
           <h5 className="text-lg">Income by Category</h5>
           <p className="text-xs text-gray-400 mt-0.5">
-            Your total income, and how much of it comes from each category.
+            {selectedMonth === "All"
+              ? "Your total income, and how much of it comes from each category."
+              : `Your income for ${selectedMonth}, broken down by category.`}
           </p>
         </div>
       </div>
 
       <CustomPieChart
         data={chartData}
-        label="Total Income"
+        label={selectedMonth === "All" ? "Total Income" : selectedMonth}
         totalAmount={`$${totalIncome.toLocaleString()}`}
         showTextAnchor
         showLegendAmount

@@ -12,6 +12,7 @@ import Modal from "../../components/Modal";
 import AddIncomeForm from "../../components/Income/AddIncomeForm";
 import toast from "react-hot-toast";
 import DeleteAlert from "../../components/DeleteAlert";
+import { filterTransactionsByMonth } from "../../components/MonthFilterBar";
 
 const Income = () => {
   const [incomeData, setIncomeData] = useState([]);
@@ -20,6 +21,7 @@ const Income = () => {
 
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false);
   const [editingIncome, setEditingIncome] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState("All");
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
     data: null,
@@ -194,10 +196,15 @@ const Income = () => {
             />
           </div>
 
-          <IncomeCategoryOverview transactions={incomeData} />
+          <IncomeCategoryOverview
+            transactions={filterTransactionsByMonth(incomeData, selectedMonth)}
+            selectedMonth={selectedMonth}
+          />
 
           <IncomeList
             transactions={incomeData}
+            selectedMonth={selectedMonth}
+            onSelectMonth={setSelectedMonth}
             onDelete={(id) => {
               setOpenDeleteAlert({ show: true, data: id });
             }}

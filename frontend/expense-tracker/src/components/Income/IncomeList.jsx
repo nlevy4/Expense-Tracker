@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import TransactionInfoCard from "../Cards/TransactionInfoCard";
 import moment from "moment";
 import { LuDownload } from "react-icons/lu";
@@ -6,9 +6,14 @@ import MonthFilterBar, {
   filterTransactionsByMonth,
 } from "../MonthFilterBar";
 
-const IncomeList = ({ transactions, onDelete, onEdit, onDownload }) => {
-  const [selectedMonth, setSelectedMonth] = useState("All");
-
+const IncomeList = ({
+  transactions,
+  onDelete,
+  onEdit,
+  onDownload,
+  selectedMonth,
+  onSelectMonth,
+}) => {
   const filteredTransactions = useMemo(
     () => filterTransactionsByMonth(transactions, selectedMonth),
     [transactions, selectedMonth]
@@ -36,7 +41,7 @@ const IncomeList = ({ transactions, onDelete, onEdit, onDownload }) => {
       <MonthFilterBar
         transactions={transactions}
         selectedMonth={selectedMonth}
-        onSelectMonth={setSelectedMonth}
+        onSelectMonth={onSelectMonth}
       />
 
       <div className="flex items-center justify-between mt-4 px-1">
