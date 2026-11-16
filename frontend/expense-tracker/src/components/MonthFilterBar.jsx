@@ -6,7 +6,7 @@ import { LuChevronDown } from "react-icons/lu";
 export const getAvailableMonths = (transactions) => {
   const months = new Set();
   transactions?.forEach((t) => {
-    if (t?.date) months.add(moment(t.date).format("MMM YYYY"));
+    if (t?.date) months.add(moment.utc(t.date).format("MMM YYYY"));
   });
 
   return Array.from(months).sort(
@@ -17,7 +17,7 @@ export const getAvailableMonths = (transactions) => {
 export const filterTransactionsByMonth = (transactions, selectedMonth) => {
   if (selectedMonth === "All") return transactions;
   return transactions?.filter(
-    (t) => moment(t?.date).format("MMM YYYY") === selectedMonth
+    (t) => moment.utc(t?.date).format("MMM YYYY") === selectedMonth
   );
 };
 
